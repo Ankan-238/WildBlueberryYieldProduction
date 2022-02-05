@@ -1,35 +1,51 @@
 
 import streamlit as st
-from model import predict_yield
-import numpy as np
+import joblib
+import sklearn
+import pandas
 
-st.set_page_config(page_title="Wild Blueberry Yield Prediction App", page_icon= "", layout="wide")
-col1, col2= st.columns([3,5])
+rf = joblib.load('randomforest.joblib')
 
-with col1:
-    with st.form("Prediction Form"):
-        st.header("Enter the required features")
-        clonesize= st.text_input("clonesize value")
-        osmia= st.text_input("osmia value")
-        AverageOfUpperTRange= st.text_input("average Of Upper TRange")
-        AverageOfLowerTRange= st.text_input("average Of Lower TRange")
-        AverageRainingDays= st.text_input("average number of raining days")
-        fruitset= st.text_input("fruitset value")
-        fruitmass= st.text_input("fruitmass value")
-        seeds= st.text_input("seeds value")
+col = ['Row#', 'clonesize', 'honeybee', 'bumbles', 'andrena', 'osmia',
+       'MaxOfUpperTRange', 'MinOfUpperTRange', 'AverageOfUpperTRange',
+       'MaxOfLowerTRange', 'MinOfLowerTRange', 'AverageOfLowerTRange',
+       'RainingDays', 'AverageRainingDays', 'fruitset', 'fruitmass', 'seeds']
 
-        submit_val=st.form_submit_button("Predict Yield")
+def prediction_yield(row, clonesize, honeybee, bumbles, osmia,maxutrange, minutrange,avgutrange,maxltrange,minltrange,avgltrange,rainingdays,avgrainingdays,fruitset,fruitmass,seeds):
 
-if submit_val:
-    print(clonesize)
-    attribute=np.array([float(clonesize), float(osmia), float(AverageOfLowerTRange), float(AverageOfUpperTRange), float(AverageRainingDays),
-    float(fruitmass), float(fruitset), float(seeds)]).reshape(1,-1)
+    prediction = rf.predict([[row, clonesize, honeybee, bumbles, osmia,maxutrange, minutrange,avgutrange,maxltrange,minltrange,avgltrange,rainingdays,avgrainingdays,fruitset,fruitmass,seeds]])
+    print('prediction done')
+    return prediction
 
-    if attribute.shape==(1,8):
-        print("Attributes are valid")
-        value= predict_yield(attributes= attribute)
 
-        with col2:
-            st.header("Here are the results: ")
-            st.success(f"The yield value is {value}")
+def main():
 
+    st.header('Blueberry Yield Prediction App')
+
+    row = st.text_input('Row','Row# Value')
+    clonesize = st.text_input('clonesize','clonesize value')
+    honeybee = st.text_input('honeybee','bumbles_value')
+    bumbles = st.text_input('andrena','andrena values')
+    osmia = st.text_input('osmia','osmia')
+    maxutrange = st.text_input('maxutrange','maxutrange')
+    minutrange = st.text_input('minutrange','minutrange')
+    avgutrange = st.text_input('avgutrange','avgutrange')
+    maxltrange = st.text_input('maxltrange','maxltrange')
+    minltrange = st.text_input('minltrange','minltrange')
+    avgltrange = st.text_input('avgltrange','avgltrange')
+    rainingdays = st.text_input('rainingdays','rainingdays')
+    avgrainingdays= st.text_input('avgrainingdays','avgrainingdays')
+    fruitset = st.text_input('fruitset','fruitset')
+    fruitmass = st.text_input('fruitmass','fruitmass')
+    seeds = st.text_input('seeds','seeds')
+    pred=""
+
+
+    if st.button('Predict Yield'):
+        pred = prediction_yield(row,clonesize, honeybee, bumbles, osmia,maxutrange, minutrange,avgutrange,maxltrange,minltrange,avgltrange,rainingdays,avgrainingdays,fruitset,fruitmass,seeds)
+
+        st.success('The yield is {}'.format(pred))
+
+if __name__ == '__main__':
+
+    main()
