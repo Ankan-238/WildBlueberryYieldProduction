@@ -4,7 +4,7 @@ import joblib
 import sklearn
 import pandas
 
-rf = joblib.load('randomforest.joblib')
+rf = joblib.load('rf_fs_object.joblib')
 
 col = ['Row#', 'clonesize', 'honeybee', 'bumbles', 'andrena', 'osmia',
        'MaxOfUpperTRange', 'MinOfUpperTRange', 'AverageOfUpperTRange',
